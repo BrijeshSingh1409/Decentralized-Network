@@ -41,6 +41,7 @@ export function recomputeRoutes(topology, mode = "dijkstra") {
     const { distances, prev } = dijkstra(graph, myIP);
 
     for (const dest in distances) {
+      if(dest === myIP) continue;
       let nextHop = dest;
       while (prev[nextHop] && prev[nextHop] !== myIP) {
         nextHop = prev[nextHop];

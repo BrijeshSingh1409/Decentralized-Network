@@ -1,17 +1,12 @@
 // src/app/routingTable.js
 
-// In-memory routing table
-// destinationIP -> { nextHopIP, cost }
 const routingTable = {};
 
-/**
- * Add or update a route
- * @param {string} destinationIP
- * @param {string} nextHopIP
- * @param {number} cost
- */
+// add or update route
 export function addRoute(destinationIP, nextHopIP, cost) {
-  // If route doesn't exist OR new cost is better → update
+
+  if (destinationIP === nextHopIP) return;
+
   if (
     !routingTable[destinationIP] ||
     routingTable[destinationIP].cost > cost
@@ -19,35 +14,28 @@ export function addRoute(destinationIP, nextHopIP, cost) {
     routingTable[destinationIP] = {
       nextHopIP,
       cost,
-      updatedAt: Date.now(),
+      updatedAt: Date.now()
     };
   }
+
 }
 
-/**
- * Remove a route (used when node goes offline)
- */
+// remove route
 export function removeRoute(destinationIP) {
   delete routingTable[destinationIP];
 }
 
-/**
- * Get route for forwarding
- */
+// get best route
 export function getRoute(destinationIP) {
   return routingTable[destinationIP] || null;
 }
 
-/**
- * Get full routing table (for debugging / UI)
- */
+// get whole table
 export function getRoutingTable() {
   return { ...routingTable };
 }
 
-/**
- * Clear routing table (used before recomputation)
- */
+// clear table
 export function clearRoutingTable() {
   Object.keys(routingTable).forEach((key) => delete routingTable[key]);
 }

@@ -1,8 +1,20 @@
-// forwardMessage.js
-
 import { getRoute } from "./routingTable";
+import { getMyIP } from "./deviceConfig";
+import { sendPacket } from "./socket";
 
 export function forwardMessage(packet) {
+
+  const myIP = getMyIP();
+
+  if (packet.destIP === myIP) {
+
+    window.dispatchEvent(
+      new CustomEvent("MESSAGE_RECEIVED", { detail: packet })
+    );
+
+    return;
+  }
+
   const route = getRoute(packet.destIP);
 
   if (!route) {
@@ -10,11 +22,6 @@ export function forwardMessage(packet) {
     return;
   }
 
-  console.log(
-    `Forwarding packet to ${packet.destIP} via next hop ${route.nextHop}`
-  );
-
-  // simulated send
   packet.ttl -= 1;
 
   if (packet.ttl <= 0) {
@@ -22,5 +29,5 @@ export function forwardMessage(packet) {
     return;
   }
 
-  // sendToNextHop(route.nextHop, packet) → socket.js
+  sendPacket(route.nextHopIP, packet);
 }

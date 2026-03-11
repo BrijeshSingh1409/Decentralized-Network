@@ -1,6 +1,6 @@
-// src/app/socket.js
 import { io } from "socket.io-client";
 import { recomputeRoutes } from "./networkManager";
+import { forwardMessage } from "./forwardMessage";
 
 const socket = io("http://localhost:5000");
 
@@ -15,6 +15,7 @@ export function sendPacket(nextHopIP, packet) {
 
 socket.on("packet-receive", (data) => {
   console.log("Packet received:", data);
+  forwardMessage(data.packet);
 });
 
 socket.on("TOPOLOGY_UPDATE", (topology) => {
