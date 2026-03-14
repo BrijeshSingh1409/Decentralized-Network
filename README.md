@@ -122,8 +122,8 @@ Payload: Hello
 ### 1. Clone Repository
 
 ```
-git clone https://github.com/yourusername/decentralized-chat.git
-cd decentralized-chat
+git clone https://github.com/BrijeshSingh1409/Decentralized-Network.git
+cd Decentralized-Network
 ```
 
 ---
