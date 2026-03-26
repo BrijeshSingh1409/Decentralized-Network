@@ -1,8 +1,6 @@
-// bfs.js
-
 export function bfs(graph, startNode) {
   const visited = new Set();
-  const queue = [[startNode, null]]; // [current, parent]
+  const queue = [[startNode, null]];
   const parentMap = {};
 
   visited.add(startNode);
@@ -11,7 +9,9 @@ export function bfs(graph, startNode) {
     const [current, parent] = queue.shift();
     parentMap[current] = parent;
 
-    for (const neighbor of graph[current] || []) {
+    for (const edge of graph[current] || []) {
+      const neighbor = typeof edge === "string" ? edge : edge.node;
+
       if (!visited.has(neighbor)) {
         visited.add(neighbor);
         queue.push([neighbor, current]);

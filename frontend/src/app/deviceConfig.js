@@ -1,4 +1,3 @@
-// deviceConfig.js
 import socket from "./socket";
 
 let myIP = null;
@@ -6,12 +5,12 @@ let neighbors = [];
 
 // Request dynamic IP from backend
 export function requestIP() {
-  socket.emit("REQUEST_IP");
-
-  socket.on("ASSIGN_IP", (ip) => {
+  socket.once("ASSIGN_IP", (ip) => {
     myIP = ip;
     console.log("Assigned IP:", myIP);
   });
+
+  socket.emit("REQUEST_IP");
 }
 
 // Update neighbors when topology changes

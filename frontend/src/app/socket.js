@@ -15,7 +15,7 @@ export function sendPacket(nextHopIP, packet) {
 
 socket.on("packet-receive", (data) => {
   console.log("Packet received:", data);
-  forwardMessage(data.packet);
+  forwardMessage(data);
 });
 
 socket.on("TOPOLOGY_UPDATE", (topology) => {

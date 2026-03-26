@@ -18,7 +18,7 @@ function App() {
     const interval = setInterval(() => {
       setMyIP(getMyIP());
       setRoutes(getRoutingTable());
-    }, 1000);
+    }, 500);
 
     const handler = (e) => {
       setMessages((prev) => [...prev, e.detail]);

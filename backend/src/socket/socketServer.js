@@ -1,5 +1,3 @@
-// socket/socketServer.js
-
 import axios from "axios";
 
 let ipCounter = 1;
@@ -13,14 +11,29 @@ function generateIP() {
   return ip;
 }
 
+function buildTopology() {
+  const ips = Object.keys(ipToSocket);
+  const topology = [];
+
+  for (let i = 0; i < ips.length; i++) {
+    for (let j = i + 1; j < ips.length; j++) {
+      topology.push({
+        from: ips[i],
+        to: ips[j],
+        cost: 1,
+      });
+    }
+  }
+
+  return topology;
+}
+
 export const setupSocketServer = (io) => {
   io.on("connection", (socket) => {
-
     console.log("Device connected:", socket.id);
 
     // Device requests IP
     socket.on("REQUEST_IP", async () => {
-
       const ip = generateIP();
 
       socketToIP[socket.id] = ip;
@@ -41,17 +54,10 @@ export const setupSocketServer = (io) => {
         console.error("Failed to register node in DB:", err.message);
       }
 
-      // Send TOPOLOGY_UPDATE to all devices
-      const topology = Object.keys(ipToSocket).map(ipAddr => ({
-        from: ipAddr,
-        to: ipAddr,
-        cost: 1
-      }));
-      io.emit("TOPOLOGY_UPDATE", topology);
-
+      io.emit("TOPOLOGY_UPDATE", buildTopology());
     });
 
-    // Packet forwarding (unified event name with frontend)
+    // Packet forwarding
     socket.on("packet-send", ({ nextHopIP, packet }) => {
       const nextSocket = ipToSocket[nextHopIP];
 
@@ -64,7 +70,6 @@ export const setupSocketServer = (io) => {
 
     // Handle disconnect
     socket.on("disconnect", async () => {
-
       const ip = socketToIP[socket.id];
 
       delete socketToIP[socket.id];
@@ -75,20 +80,13 @@ export const setupSocketServer = (io) => {
       // Remove from MongoDB
       try {
         await axios.post("http://localhost:5000/api/nodes/remove", {
-          nodeId: socket.id
+          nodeId: socket.id,
         });
       } catch (err) {
         console.error("Failed to remove node from DB:", err.message);
       }
 
-      // Update topology for remaining devices
-      const topology = Object.keys(ipToSocket).map(ipAddr => ({
-        from: ipAddr,
-        to: ipAddr,
-        cost: 1
-      }));
-      io.emit("TOPOLOGY_UPDATE", topology);
+      io.emit("TOPOLOGY_UPDATE", buildTopology());
     });
-
   });
 };

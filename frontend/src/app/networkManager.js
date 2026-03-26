@@ -1,4 +1,3 @@
-// networkManager.js
 import { bfs } from "./bfs";
 import { dijkstra } from "./dijkstra";
 import { clearRoutingTable, addRoute } from "./routingTable";
@@ -29,10 +28,15 @@ export function recomputeRoutes(topology, mode = "dijkstra") {
     const parentMap = bfs(graph, myIP);
 
     for (const dest in parentMap) {
+      if (dest === myIP) continue;
+
       let nextHop = dest;
-      while (parentMap[nextHop] !== myIP) {
+      while (parentMap[nextHop] && parentMap[nextHop] !== myIP) {
         nextHop = parentMap[nextHop];
       }
+
+      if (!parentMap[nextHop] && nextHop !== dest) continue;
+
       addRoute(dest, nextHop, 1);
     }
   }
@@ -41,11 +45,14 @@ export function recomputeRoutes(topology, mode = "dijkstra") {
     const { distances, prev } = dijkstra(graph, myIP);
 
     for (const dest in distances) {
-      if(dest === myIP) continue;
+      if (dest === myIP || distances[dest] === Infinity) continue;
+
       let nextHop = dest;
+
       while (prev[nextHop] && prev[nextHop] !== myIP) {
         nextHop = prev[nextHop];
       }
+
       addRoute(dest, nextHop, distances[dest]);
     }
   }

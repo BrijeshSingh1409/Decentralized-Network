@@ -1,11 +1,8 @@
-// src/app/routingTable.js
-
 const routingTable = {};
 
 // add or update route
 export function addRoute(destinationIP, nextHopIP, cost) {
-
-  if (destinationIP === nextHopIP) return;
+  if (!destinationIP || !nextHopIP) return;
 
   if (
     !routingTable[destinationIP] ||
@@ -14,10 +11,9 @@ export function addRoute(destinationIP, nextHopIP, cost) {
     routingTable[destinationIP] = {
       nextHopIP,
       cost,
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     };
   }
-
 }
 
 // remove route

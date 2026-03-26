@@ -1,11 +1,9 @@
-// dijkstra.js
-
 export function dijkstra(graph, start) {
   const distances = {};
   const prev = {};
   const visited = new Set();
 
-  Object.keys(graph).forEach(node => {
+  Object.keys(graph).forEach((node) => {
     distances[node] = Infinity;
   });
 
@@ -26,7 +24,7 @@ export function dijkstra(graph, start) {
 
     visited.add(closestNode);
 
-    for (const { node, cost } of graph[closestNode]) {
+    for (const { node, cost } of graph[closestNode] || []) {
       const newDist = distances[closestNode] + cost;
       if (newDist < distances[node]) {
         distances[node] = newDist;
